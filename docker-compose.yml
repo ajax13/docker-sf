@@ -1,0 +1,22 @@
+version: '1'
+services:
+  web:
+    build: .
+    links:
+      - database
+    ports:
+      - "3000:80"
+    volumes:
+      - .:/var/www/
+    depends_on:
+      - database
+
+  database:
+    image: mysql/mysql-server:5.5
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=symfony
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=root
