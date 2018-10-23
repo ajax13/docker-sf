@@ -1,6 +1,6 @@
 ##################
 ## files and the directories which are ##
-## to be excluded from the build process ##
+## not to be excluded from the build process ##
 ####################
 
 .git
