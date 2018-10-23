@@ -13,7 +13,7 @@ MAINTAINER Abir Brahem <abir.brahem@gmail.com>
 # Essentially, the USER instruction will modify the default user ID from root to the one specified in this instruction
 USER www-data
 
-# Run any command: RUN <command>, is always executed by /bin/sh -c
+# Run any command during the build time "when creating a image": RUN <command>, is always executed by /bin/sh -c
 RUN echo 'PS1="\[\033[36m\]\u\[\033[m\]@\[\033[95;1m\]docker-application:\[\033[34m\]\w\[\033[m\]\$ "' >> ~/.bashrc
 #RUN ["bash", "-c", "rm", "-rf", "/tmp/abc"] .
 RUN echo "alias console='php bin/console'"  >> ~/.bashrc
@@ -55,11 +55,12 @@ RUN ln -s /etc/nginx/sites-available/vhost.conf /etc/nginx/sites-enabled/vhost.c
 RUN sed -i -e "s/;\?date.timezone\s*=\s*.*/date.timezone = Europe\/Kiev/g" /etc/php5/fpm/php.ini
 ADD ./www.conf /usr/local/etc/php-fpm.d/
 
-# CMD instruction is executed when the container is launched from the newly created image, 
+# CMD instruction is executed when the container is launched then "after the building", 
 # whereas the RUN instruction is executed during the build time => for providing a default execution
 # In the case of multiple CMD instructions, only the last CMD instruction would be effective!!!
 CMD service php5-fpm start && nginx
-
+# CMD ["<exec>", "<arg-1>", ..., "<arg-n>"]
+# CMD ["php", "app.php"]
 
 #############################
 ### Symfony Project config ##
@@ -70,26 +71,23 @@ RUN php -r "readfile('https://getcomposer.org/installer');" | php && chmod +x co
 RUN export PATH="~/.composer/vendor/bin/:$PATH"
 RUN composer install
 
-# Set the working directory to /app, default it is / : WORKDIR <dirpath>
+# Set the working directory in the container, default it is / : WORKDIR <dirpath>
 WORKDIR /www/var
 
-
 ADD ./docker/docker.sh /docker.sh
-# Crafting an image for running an application (entry point) during the complete life cycle of the container: ENTRYPOINT <command>
+
+# During the complete life cycle of the container, first command to run to start the web application: ENTRYPOINT <command>
 # The build system will ignore all the ENTRYPOINT instructions except the last one.
 ENTRYPOINT ["/bin/bash", "/docker.sh"]
 
-
-
 # Make port 80 available to the world outside this container: EXPOSE <port>[/<proto>] [<port>[/<proto>]...]
 EXPOSE 80 443
-# Define environment variable in the new image: ENV <key> <value>
+
+# Define environment variables that could be used in the container: ENV <key> <value>
 ENV SYMFONY_ENV dev
 
-#VOLUME <mountpoint>
-
-# CMD ["<exec>", "<arg-1>", ..., "<arg-n>"]
-# CMD ["python", "app.py"]
+# Define default volume: host_volume_path_file:container_volume_path_file
+VOLUME $(CMD):/www/var
 
 # Confirmation message
 RUN echo "  [FINAL OK] Container is now available !"
