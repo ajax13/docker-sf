@@ -71,7 +71,8 @@ RUN php -r "readfile('https://getcomposer.org/installer');" | php && chmod +x co
 RUN export PATH="~/.composer/vendor/bin/:$PATH"
 RUN composer install
 
-# Set the working directory in the container, default it is / : WORKDIR <dirpath>
+# Set the working directory in the container which from it the next RUN command will be executed
+#, default it is / : WORKDIR <dirpath>
 WORKDIR /www/var
 
 ADD ./docker/docker.sh /docker.sh
