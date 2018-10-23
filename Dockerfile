@@ -87,8 +87,8 @@ EXPOSE 80 443
 # Define environment variables that could be used in the container: ENV <key> <value>
 ENV SYMFONY_ENV dev
 
-# Define default volume: container_volume_path_file:host_volume_path_file
-VOLUME $(CMD):/www/var
+# Define default volumes: VOLUME ["volume1", "volume2", ..]
+VOLUME ["/www/var"]
 
 # Confirmation message
 RUN echo "  [FINAL OK] Container is now available !"
