@@ -92,3 +92,5 @@ VOLUME ["/www/var"]
 
 # Confirmation message
 RUN echo "  [FINAL OK] Container is now available !"
+
+RUN echo $SYMFONY_ENV
